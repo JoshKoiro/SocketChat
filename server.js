@@ -42,6 +42,12 @@ io.on('connection', function(client){
     console.log(AddressColorDisconnect("\r\n"+ client_ip));
     console.log(AddressColorDisconnect(" disconnected at " + date));
   });
+  //message connection
+  client.on('message',function(msg){
+    client.emit('message',msg);
+  });
+
+
 });
 //run server
 server.listen(3000,function(){
