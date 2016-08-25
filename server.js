@@ -44,6 +44,7 @@ io.on('connection', function(client){
   });
   //message connection
   client.on('chat message',function(msg){
+    console.log(clc.red("\r\n - " + client_ip + " posted as " + msg.user));
     io.emit('chat message',msg);
   });
 
