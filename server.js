@@ -43,8 +43,8 @@ io.on('connection', function(client){
     console.log(AddressColorDisconnect(" disconnected at " + date));
   });
   //message connection
-  client.on('message',function(msg){
-    client.emit('message',msg);
+  client.on('chat message',function(msg){
+    io.emit('chat message',msg);
   });
 
 
