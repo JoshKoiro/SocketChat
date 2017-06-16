@@ -41,14 +41,22 @@
           'text':$('#m').val(),
           'user': $('#username').val()
         });
+        //send vibrate function to all devices except sender
+        socket.emit(include_self=false,'vibrate',{'key': 1});
+        console.log('client emitted vibrate...');
         //clear messagebox
         $('#m').val('');
         $('#m').focus();
         return false;
       });
       socket.on('chat message', function(msg){
+
         $('#messages').append($('<li>').text(msg.user));
         $('#messages').append($('<li>').text(msg.text));
+      });
+      socket.on('vibrate', function(data){
+        navigator.vibrate([50,0,50]);
+        console.log('client ran vibrate function...');
       });
     </script>
   </body>

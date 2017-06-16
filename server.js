@@ -48,6 +48,10 @@ io.on('connection', function(client){
     io.emit('chat message',msg);
   });
 
+  client.on('vibrate',function(data){
+    io.emit('vibrate',data);
+    console.log('vibration function called');
+    });
 
 });
 //run server
