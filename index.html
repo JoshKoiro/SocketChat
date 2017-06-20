@@ -12,7 +12,7 @@
          form button { width: 9%; background: #555; border: none; padding: 1%; color: #fff;}
          #messages { list-style-type: none; margin: 0; padding: 0;}
          #messages li { padding: 5px 10px; font-style: normal; color:#090;}
-         #messages li:nth-child(odd) { background: #444; font-style: normal;font-size: 16px;}
+         #messages li:nth-child(odd) { color:white;background: #444; font-style: normal;font-size: 13px;}
          span {color:white;font-size:12px;float:right;}
          @media only screen and (max-device-aspect-ratio: 1/1){
            form input {padding: 50px;width: 100%;font-size:50px; margin-bottom: 25px;}
@@ -27,7 +27,7 @@
   <body>
     <ul id="messages"></ul>
     <form>
-      <input id="username" placeholder="username"/>
+      <input id="username" placeholder="username" autofocus/>
       <input id="m" autocomplete="off" placeholder="message"/>
       <button>Send</button>
     </form>

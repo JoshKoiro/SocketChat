@@ -2,7 +2,15 @@ var app = require('express')();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var clc = require('cli-color');
-var moment = require('moment')
+var moment = require('moment');
+var ip = require('ip');
+var os = require('os');
+var figlet = require('figlet');
+var qrcode = require('qrcode-terminal');
+var cliSpinners = require('cli-spinners');
+var ora = require("ora");
+
+//Persistant Message database
 var Messages = [];
 
 var AddressColorConnect = clc.magentaBright;
@@ -61,6 +69,18 @@ io.on('connection', function(client){
 
 });
 //run server
-server.listen(3000,function(){
-  console.log('server running on localhost:3000');
+var port = 3000;
+server.listen(port,function(){
+  figlet('SocketChat',(err,data) => {
+    if(err){
+      console.log("something went wrong: " + err);
+    } else {
+      console.log(data);
+      var serverIp = ip.address();
+      console.log(qrcode.generate(serverIp+":"+port));
+      console.log(clc.whiteBright("\r\n----------"));
+      console.log(clc.whiteBright('server running on LAN at '+serverIp+':3000'));
+      console.log(clc.whiteBright("----------"));
+  }
+})
 });
