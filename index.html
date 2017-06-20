@@ -11,8 +11,9 @@
          form input { border: 0; padding: 10px; width: 44%; margin-right: .5%; font-size: 16px;}
          form button { width: 9%; background: #555; border: none; padding: 1%; color: #fff;}
          #messages { list-style-type: none; margin: 0; padding: 0;}
-         #messages li { padding: 5px 10px; font-style: normal; color:#0F0;}
+         #messages li { padding: 5px 10px; font-style: normal; color:#090;}
          #messages li:nth-child(odd) { background: #444; font-style: normal;font-size: 16px;}
+         span {color:white;font-size:12px;float:right;}
          @media only screen and (max-device-aspect-ratio: 1/1){
            form input {padding: 50px;width: 100%;font-size:50px; margin-bottom: 25px;}
            form button {font-size: 50px; width:100%; padding-top: 50px; padding-bottom: 50px;}
@@ -52,6 +53,7 @@
       socket.on('chat message', function(msg){
 
         $('#messages').append($('<li>').text(msg.user));
+        $('li').last().append($('<span>').text(msg.time));
         $('#messages').append($('<li>').text(msg.text));
       });
       socket.on('vibrate', function(data){

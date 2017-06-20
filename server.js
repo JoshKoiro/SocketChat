@@ -2,6 +2,8 @@ var app = require('express')();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var clc = require('cli-color');
+var moment = require('moment')
+var Messages = [];
 
 var AddressColorConnect = clc.magentaBright;
 var AddressColorDisconnect = clc.xterm(202);
@@ -29,22 +31,26 @@ io.on('connection', function(client){
   var client_ip = getIp(client);
   //get current date
   var newDate = new Date();
-  //format current date
-  var date = newDate.getMonth()+"/"+ newDate.getDate()+ " at: " + newDate.getHours()+ ':' + newDate.getMinutes() + ":" + newDate.getSeconds();
   //output connection notification
   console.log(AddressColorConnect("\r\n"+ client_ip));
-  console.log(AddressColorConnect("connected at " + date));
+  console.log(AddressColorConnect("connected "+ moment().format("MMMM Do") + " at " + moment().format("h:mm:ss a")));
+  for(i=0;i<Messages.length;i++){
+    io.emit('chat message',Messages[i]);
+  }
 
   client.on('disconnect',function(){
     //define diconnect date
     var date = new Date();
     //output disconnection notification
     console.log(AddressColorDisconnect("\r\n"+ client_ip));
-    console.log(AddressColorDisconnect(" disconnected at " + date));
+    console.log(AddressColorDisconnect(" disconnected "+ moment().format("MMMM Do") +" at " + moment().format("h:mm:ss a")));
   });
   //message connection
   client.on('chat message',function(msg){
-    console.log(clc.red("\r\n - " + client_ip + " posted as " + msg.user));
+    console.log(clc.red("\r\n - " + client_ip + " posted as " + msg.user + " at " + moment().format("h:mm:ss a")));
+    var messageDate = new Date()
+    msg.time = moment().format("MMMM Do")+ " at: " + moment().format("h:mm:ss a")
+    Messages.push(msg)
     io.emit('chat message',msg);
   });
 
