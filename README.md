@@ -8,3 +8,4 @@
 - Incryption?
 - Make message input into message-box on desktop
 - Allow you to send links
+- Create CLI interface for server administration while running
