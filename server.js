@@ -24,9 +24,7 @@ app.get('/', function(req, res){
 
 //express server function for curling to url
 app.get('/bash',function(req,res){
-  (res) => {
     res.json(Messages)
-  } 
 });
 
 // get the IP address of connections (filter and format result)
