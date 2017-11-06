@@ -35,7 +35,7 @@ function getIp(client){
   if(client.handshake.address === "::1"){
     client_ip = 'localhost';
   } else {
-    client_ip = client.handshake.address;
+    client_ip = client.handshake.address.split(":")[3];
   }
   return client_ip;
 }
