@@ -13,7 +13,7 @@ var ora = require("ora");
 //Persistant Message database
 var Messages = [];
 
-var AddressColorConnect = clc.magentaBright;
+var AddressColorConnect = clc.green;
 var AddressColorDisconnect = clc.xterm(202);
 
 //express server function
@@ -24,6 +24,7 @@ app.get('/', function(req, res){
 
 //express server function for curling to url
 app.get('/bash',function(req,res){
+    app.set('json spaces',3)
     res.json(Messages)
 });
 
@@ -60,9 +61,12 @@ io.on('connection', function(client){
   });
   //message connection
   client.on('chat message',function(msg){
-    console.log(clc.red("\r\n - " + client_ip + " posted as " + msg.user + " at " + moment().format("h:mm:ss a")));
+    console.log(clc.blueBright("\r\n - " + client_ip + " posted as " + msg.user + " at " + moment().format("h:mm:ss a")));
     var messageDate = new Date()
-    msg.time = moment().format("MMMM Do")+ " at: " + moment().format("h:mm:ss a")
+    msg.ipAddress = client_ip
+    msg.time = moment().format("h:mm:ss a")
+    msg.date = moment().format("MMMM Do")
+    msg.year = moment().format("YYYY")
     Messages.push(msg)
     io.emit('chat message',msg);
   });
@@ -80,9 +84,13 @@ server.listen(port,function(){
     if(err){
       console.log("something went wrong: " + err);
     } else {
-      console.log(data);
+      // console.log(data);
       var serverIp = ip.address();
+      let connectedDate = new Date()
       console.log(qrcode.generate(serverIp+":"+port));
+      console.log(clc.whiteBright("\r\n----------"));
+      console.log(clc.whiteBright("Server Connected at " + moment().format("h:mm:ss a") + " on " + moment().format("MMMM Do YYYY")))
+      console.log(clc.whiteBright("----------"));
       console.log(clc.whiteBright("\r\n----------"));
       console.log(clc.whiteBright('server running on LAN at '+serverIp+':3000'));
       console.log(clc.whiteBright("----------"));

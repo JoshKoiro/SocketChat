@@ -51,10 +51,11 @@
         return false;
       });
       socket.on('chat message', function(msg){
+        
+        $('#messages').prepend($('<li>').text(msg.text));
+        $('#messages').prepend($('<li>').text(msg.user));
+        $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time));
 
-        $('#messages').append($('<li>').text(msg.user));
-        $('li').last().append($('<span>').text(msg.time));
-        $('#messages').append($('<li>').text(msg.text));
       });
       socket.on('vibrate', function(data){
         navigator.vibrate([50,0,50]);
