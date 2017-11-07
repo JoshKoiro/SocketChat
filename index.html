@@ -42,6 +42,9 @@
           'text':$('#m').val(),
           'user': $('#username').val()
         });
+
+        socket.emit('init',{})
+
         //send vibrate function to all devices except sender
         socket.emit(include_self=false,'vibrate',{'key': 1});
         console.log('client emitted vibrate...');
@@ -50,13 +53,21 @@
         $('#m').focus();
         return false;
       });
-      socket.on('chat message', function(msg){
-        
-        $('#messages').prepend($('<li>').text(msg.text));
-        $('#messages').prepend($('<li>').text(msg.user));
-        $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time));
 
+      let printMessage = (msg) => {
+          $('#messages').prepend($('<li>').text(msg.text));
+          $('#messages').prepend($('<li>').text(msg.user));
+          $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time));
+      }
+
+      socket.on('chat message', function(msg){
+        printMessage(msg)
       });
+
+      socket.on('update',function(data){
+        data.map((e,i) => printMessage(e))
+      })
+
       socket.on('vibrate', function(data){
         navigator.vibrate([50,0,50]);
         console.log('client ran vibrate function...');

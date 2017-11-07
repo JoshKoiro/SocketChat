@@ -48,9 +48,8 @@ io.on('connection', function(client){
   //output connection notification
   console.log(AddressColorConnect("\r\n"+ client_ip));
   console.log(AddressColorConnect("connected "+ moment().format("MMMM Do") + " at " + moment().format("h:mm:ss a")));
-  for(i=0;i<Messages.length;i++){
-    io.emit('chat message',Messages[i]);
-  }
+  console.log(client.id)
+  io.to(client.id).emit('update',Messages)
 
   client.on('disconnect',function(){
     //define diconnect date
@@ -70,6 +69,10 @@ io.on('connection', function(client){
     Messages.push(msg)
     io.emit('chat message',msg);
   });
+
+  client.on('init',function(data){
+
+  })
 
   client.on('vibrate',function(data){
     io.emit('vibrate',data);
