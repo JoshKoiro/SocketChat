@@ -49,6 +49,7 @@ io.on('connection', function(client){
   console.log(AddressColorConnect("\r\n"+ client_ip));
   console.log(AddressColorConnect("connected "+ moment().format("MMMM Do") + " at " + moment().format("h:mm:ss a")));
   console.log(client.id)
+  //Send update emitter message to client that has connected
   io.to(client.id).emit('update',Messages)
 
   client.on('disconnect',function(){
@@ -70,10 +71,7 @@ io.on('connection', function(client){
     io.emit('chat message',msg);
   });
 
-  client.on('init',function(data){
-
-  })
-
+  //Vibration for mobile
   client.on('vibrate',function(data){
     io.emit('vibrate',data);
     console.log('vibration function called');

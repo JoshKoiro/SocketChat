@@ -43,8 +43,6 @@
           'user': $('#username').val()
         });
 
-        socket.emit('init',{})
-
         //send vibrate function to all devices except sender
         socket.emit(include_self=false,'vibrate',{'key': 1});
         console.log('client emitted vibrate...');
@@ -54,20 +52,24 @@
         return false;
       });
 
+      //function to take message and print to html
       let printMessage = (msg) => {
           $('#messages').prepend($('<li>').text(msg.text));
           $('#messages').prepend($('<li>').text(msg.user));
           $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time));
       }
 
+      //Handle chat message emit from server
       socket.on('chat message', function(msg){
         printMessage(msg)
       });
 
+      //Handle update emit from server (called when connection is established)
       socket.on('update',function(data){
         data.map((e,i) => printMessage(e))
       })
 
+      //Vibration for mobile
       socket.on('vibrate', function(data){
         navigator.vibrate([50,0,50]);
         console.log('client ran vibrate function...');
