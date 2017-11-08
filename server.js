@@ -52,8 +52,14 @@ io.on('connection', function(client){
   //Send update emitter message to client that has connected
   io.to(client.id).emit('update',Messages)
 
-  client.on('username update',(user) =>{
-    io.emit('newuser',user)
+  client.on('username update',(msg) =>{
+    var messageDate = new Date()
+    msg.ipAddress = client_ip
+    msg.time = moment().format("h:mm:ss a")
+    msg.date = moment().format("MMMM Do")
+    msg.year = moment().format("YYYY")
+    Messages.push(msg)
+    io.emit('newuser',msg)
   })
 
   client.on('disconnect',function(){
@@ -63,6 +69,9 @@ io.on('connection', function(client){
     console.log(AddressColorDisconnect("\r\n"+ client_ip));
     console.log(AddressColorDisconnect(" disconnected "+ moment().format("MMMM Do") +" at " + moment().format("h:mm:ss a")));
   });
+
+  //post message to Messages object
+
   //message connection
   client.on('chat message',function(msg){
     console.log(clc.blueBright("\r\n - " + client_ip + " posted as " + msg.user + " at " + moment().format("h:mm:ss a")));

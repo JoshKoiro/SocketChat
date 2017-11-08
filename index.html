@@ -42,7 +42,11 @@
 
       //Send username message
       $('#username').change(() => {
-        socket.emit('username update', $('#username').val())
+        socket.emit('username update', {
+          'user': $('#username').val(),
+          'text': $('#username').val() + " has joined"
+        }
+      )
       })
       
       //Socket emitter for form submit
@@ -68,14 +72,15 @@
       }
 
       //function to print new user alert to html
-      let newUser = (username) => {
+      let newUser = (msg) => {
         $('#messages').prepend($('<li>'))
-        $('#messages').prepend($('<li>').text(username + " has joined"))
+        $('#messages').prepend($('<li>').text(msg.text))
+        $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time))
       }
 
       //Handle new user alert
-      socket.on('newuser',(username) => {
-        newUser(username)
+      socket.on('newuser',(msg) => {
+        newUser(msg)
       })
 
       //Handle chat message emit from server
@@ -85,7 +90,12 @@
 
       //Handle update emit from server (called when connection is established)
       socket.on('update',function(data){
-        data.map((e,i) => printMessage(e))
+        let regex = /has joined/g
+        data.map((e,i) => {
+          (regex.test(e.text))
+          ? newUser(e)
+          : printMessage(e)
+        })
       })
 
       //Vibration for mobile
