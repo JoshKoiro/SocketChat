@@ -36,12 +36,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
       var socket = io();
+      
       //Socket emitter for form submit
       $('form').submit(function(){
         socket.emit('chat message', {
           'text':$('#m').val(),
           'user': $('#username').val()
         });
+
+      //Send username message
+      $('#username').blur(() => {
+          ($('#username').val() > 0) ?
+          socket.emit('username update',{
+            "username": $("#username").val()
+          })
+          : $('#username').focus(() =>{})
+      })
 
         //send vibrate function to all devices except sender
         socket.emit(include_self=false,'vibrate',{'key': 1});
@@ -58,6 +68,17 @@
           $('#messages').prepend($('<li>').text(msg.user));
           $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time));
       }
+
+      //function to print new user alert to html
+      let newUser = (username) => {
+        $('#messages').prepend($('<li>').text(username + " has joined"))
+        $('#messages').prepend($('<li>'))
+      }
+
+      //Handle new user alert
+      socket.on('newuser',(username) => {
+        newUser(username)
+      })
 
       //Handle chat message emit from server
       socket.on('chat message', function(msg){

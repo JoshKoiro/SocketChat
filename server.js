@@ -52,6 +52,11 @@ io.on('connection', function(client){
   //Send update emitter message to client that has connected
   io.to(client.id).emit('update',Messages)
 
+  client.on('username update',(user) =>{
+    console.log('username update called...')
+    io.emit('newuser',user.username)
+  })
+
   client.on('disconnect',function(){
     //define diconnect date
     var date = new Date();
