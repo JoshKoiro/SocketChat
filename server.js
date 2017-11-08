@@ -52,6 +52,17 @@ io.on('connection', function(client){
   //Send update emitter message to client that has connected
   io.to(client.id).emit('update',Messages)
 
+  //Emit message function TODO: Call this function instead of repeating code
+  let emitMessage = (msg,emitter) => {
+    var messageDate = new Date()
+    msg.ipAddress = client_ip
+    msg.time = moment().format("h:mm:ss a")
+    msg.date = moment().format("MMMM Do")
+    msg.year = moment().format("YYYY")
+    Messages.push(msg)
+    io.emit(emitter,msg)
+  }
+  
   client.on('username update',(msg) =>{
     var messageDate = new Date()
     msg.ipAddress = client_ip
