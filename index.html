@@ -36,6 +36,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
       var socket = io();
+
+      //Set username to focus
+    $(document).ready(() => {
+
+      //Send username message
+      $('#username').change(() => {
+        socket.emit('username update', $('#username').val())
+      })
       
       //Socket emitter for form submit
       $('form').submit(function(){
@@ -44,18 +52,8 @@
           'user': $('#username').val()
         });
 
-      //Send username message
-      $('#username').blur(() => {
-          ($('#username').val() > 0) ?
-          socket.emit('username update',{
-            "username": $("#username").val()
-          })
-          : $('#username').focus(() =>{})
-      })
-
         //send vibrate function to all devices except sender
         socket.emit(include_self=false,'vibrate',{'key': 1});
-        console.log('client emitted vibrate...');
         //clear messagebox
         $('#m').val('');
         $('#m').focus();
@@ -71,8 +69,8 @@
 
       //function to print new user alert to html
       let newUser = (username) => {
-        $('#messages').prepend($('<li>').text(username + " has joined"))
         $('#messages').prepend($('<li>'))
+        $('#messages').prepend($('<li>').text(username + " has joined"))
       }
 
       //Handle new user alert
@@ -95,6 +93,7 @@
         navigator.vibrate([50,0,50]);
         console.log('client ran vibrate function...');
       });
+  })
     </script>
   </body>
 </html>

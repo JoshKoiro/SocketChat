@@ -53,8 +53,7 @@ io.on('connection', function(client){
   io.to(client.id).emit('update',Messages)
 
   client.on('username update',(user) =>{
-    console.log('username update called...')
-    io.emit('newuser',user.username)
+    io.emit('newuser',user)
   })
 
   client.on('disconnect',function(){
