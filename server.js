@@ -12,6 +12,7 @@ var ora = require("ora");
 
 //Persistant Message database
 var Messages = [];
+var Users = [];
 
 var AddressColorConnect = clc.green;
 var AddressColorDisconnect = clc.xterm(202);
@@ -62,15 +63,18 @@ io.on('connection', function(client){
     Messages.push(msg)
     io.emit(emitter,msg)
   }
+
+  //Update User DB
+  let updateUsers = (msg,add) => {
+    (add) 
+      ? Users.push(msg)
+      : Users = Users.filter((e) => e.user !== msg.user)
+  }
   
   client.on('username update',(msg) =>{
-    var messageDate = new Date()
-    msg.ipAddress = client_ip
-    msg.time = moment().format("h:mm:ss a")
-    msg.date = moment().format("MMMM Do")
-    msg.year = moment().format("YYYY")
-    Messages.push(msg)
-    io.emit('newuser',msg)
+    emitMessage(msg,'newuser')
+    updateUsers(msg,true)
+    console.log(Users)
   })
 
   client.on('disconnect',function(){
@@ -86,13 +90,7 @@ io.on('connection', function(client){
   //message connection
   client.on('chat message',function(msg){
     console.log(clc.blueBright("\r\n - " + client_ip + " posted as " + msg.user + " at " + moment().format("h:mm:ss a")));
-    var messageDate = new Date()
-    msg.ipAddress = client_ip
-    msg.time = moment().format("h:mm:ss a")
-    msg.date = moment().format("MMMM Do")
-    msg.year = moment().format("YYYY")
-    Messages.push(msg)
-    io.emit('chat message',msg);
+    emitMessage(msg,'chat message')
   });
 
   //Vibration for mobile

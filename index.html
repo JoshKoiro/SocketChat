@@ -47,7 +47,8 @@
           'text': $('#username').val() + " has joined"
         }
       )
-      })
+      socket.id = socket.id + $('#username').val()
+    })
       
       //Socket emitter for form submit
       $('form').submit(function(){
