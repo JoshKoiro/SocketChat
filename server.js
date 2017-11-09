@@ -73,23 +73,25 @@ io.on('connection', function(client){
   }
 
   //Update User DB
-  let updateUsers = (msg,add) => {
-    (add) 
-      ? Users.push({
-        'user':msg.user,
-        'id':client.id
-      })
-      : Users = Users.filter((e) => e.user !== msg.user)
+  let addUser = (msg) => {
+    Users.push({
+      'user':msg.user,
+      'id':client.id
+    })
   }
   
+  //Handle "username update"
   client.on('username update',(msg) =>{
     emitMessage(msg,'new user')
-    updateUsers(msg,true)
+    addUser(msg)
   })
 
+  //Handle disconnect event
   client.on('disconnect',function(){
+    
     //define diconnect date
     var date = new Date();
+    
     //output disconnection notification
     console.log(AddressColorDisconnect("\r\n"+ client_ip));
     console.log(AddressColorDisconnect(" disconnected "+ moment().format("MMMM Do") +" at " + moment().format("h:mm:ss a")));
@@ -106,19 +108,20 @@ io.on('connection', function(client){
     Users = Users.filter((e) => e.id !== client.id)
   })
 
-  //message connection
+  //Handle message connection
   client.on('chat message',function(msg){
     console.log(clc.blueBright("\r\n - " + client_ip + " posted as " + msg.user + " at " + moment().format("h:mm:ss a")));
     emitMessage(msg,'chat message')
   });
 
-  //Vibration for mobile
+  //Vibration for mobile TODO
   client.on('vibrate',function(data){
     io.emit('vibrate',data);
     console.log('vibration function called');
     });
 
 });
+
 //run server
 var port = 3000;
 server.listen(port,function(){
