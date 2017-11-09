@@ -23,10 +23,16 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-//express server function for curling to url
-app.get('/bash',function(req,res){
+//express server function for getting messages
+app.get('/messages',function(req,res){
     app.set('json spaces',3)
     res.json(Messages)
+});
+
+//express server function for getting users
+app.get('/users',function(req,res){
+  app.set('json spaces',3)
+  res.json(Users)
 });
 
 // get the IP address of connections (filter and format result)
@@ -53,13 +59,15 @@ io.on('connection', function(client){
   //Send update emitter message to client that has connected
   io.to(client.id).emit('update',Messages)
 
-  //Emit message function TODO: Call this function instead of repeating code
+  //Emit message function
   let emitMessage = (msg,emitter) => {
     var messageDate = new Date()
+    msg.id = client.id
     msg.ipAddress = client_ip
     msg.time = moment().format("h:mm:ss a")
     msg.date = moment().format("MMMM Do")
     msg.year = moment().format("YYYY")
+    msg.emitterType = emitter
     Messages.push(msg)
     io.emit(emitter,msg)
   }
@@ -67,14 +75,16 @@ io.on('connection', function(client){
   //Update User DB
   let updateUsers = (msg,add) => {
     (add) 
-      ? Users.push(msg)
+      ? Users.push({
+        'user':msg.user,
+        'id':client.id
+      })
       : Users = Users.filter((e) => e.user !== msg.user)
   }
   
   client.on('username update',(msg) =>{
-    emitMessage(msg,'newuser')
+    emitMessage(msg,'new user')
     updateUsers(msg,true)
-    console.log(Users)
   })
 
   client.on('disconnect',function(){
@@ -83,9 +93,18 @@ io.on('connection', function(client){
     //output disconnection notification
     console.log(AddressColorDisconnect("\r\n"+ client_ip));
     console.log(AddressColorDisconnect(" disconnected "+ moment().format("MMMM Do") +" at " + moment().format("h:mm:ss a")));
-  });
 
-  //post message to Messages object
+    //get username that will be removed
+    let openUsername = () => (Users.filter((e) => e.id === client.id).length === 0) ? "unknown user" : Users.filter((e) => e.id === client.id)[0].user
+    
+    //send status message to window
+      emitMessage({
+      'user': openUsername(),
+      'text': openUsername() + " left the chat"
+    },'remove user')
+    //Remove Users from dataset
+    Users = Users.filter((e) => e.id !== client.id)
+  })
 
   //message connection
   client.on('chat message',function(msg){

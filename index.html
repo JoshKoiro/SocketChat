@@ -53,8 +53,8 @@
       //Socket emitter for form submit
       $('form').submit(function(){
         socket.emit('chat message', {
-          'text':$('#m').val(),
-          'user': $('#username').val()
+          'user': $('#username').val(),
+          'text':$('#m').val()
         });
 
         //send vibrate function to all devices except sender
@@ -72,16 +72,16 @@
           $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time));
       }
 
-      //function to print new user alert to html
-      let newUser = (msg) => {
+      //function to print status messages in window
+      let statusMessage = (msg) => {
         $('#messages').prepend($('<li>'))
         $('#messages').prepend($('<li>').text(msg.text))
         $('li').first().prepend($('<span>').text(msg.date + " at: " + msg.time))
       }
 
       //Handle new user alert
-      socket.on('newuser',(msg) => {
-        newUser(msg)
+      socket.on('new user',(msg) => {
+        statusMessage(msg)
       })
 
       //Handle chat message emit from server
@@ -89,13 +89,18 @@
         printMessage(msg)
       });
 
+      socket.on('remove user',function(msg){
+        statusMessage(msg)
+      })
+
       //Handle update emit from server (called when connection is established)
       socket.on('update',function(data){
-        let regex = /has joined/g
         data.map((e,i) => {
-          (regex.test(e.text))
-          ? newUser(e)
-          : printMessage(e)
+          (e.emitterType === "new user")
+          ? statusMessage(e)
+          : (e.emitterType === "remove user")
+            ? statusMessage(e)
+            : printMessage(e)
         })
       })
 
